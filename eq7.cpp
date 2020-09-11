@@ -16,14 +16,22 @@ int main()
   double r0 = 0.0;
 
   double b  = 50.0;
-  double F0 = 1.0;
+  double F0 = 0.0;
   double m  = 1.0;
   double k  = 1.0;
   double T  = 1.0;
 
   std::random_device rd;
   std::mt19937 gen(rd());
+
+  int traj=100000; //numero de trayectorias para las que se realiza la simulacion
+
+
+  double table [traj][(int(tf)+1)][4];
+  double average [(int(tf)+1)][4];
   
+  for(int c=0; c<traj; c++)
+    {
   
   for(int j=ti; j<=tf; j++)
     {
@@ -58,12 +66,41 @@ int main()
       double x7=b*sqrt(m/(3*k*T))*r;
       double x0=b*sqrt(m/(3*k*T))*r0;
 
+	  table[c][j][0]= tau7;
+	  table[c][j][1]= u7*u0;
+	  table[c][j][2]= u7*(x7-x0);
+	  table[c][j][3]= pow(x7-x0,2);
+
+      
+      /*
       double Au = exp(-tau7); //expresion analitica para <u(tau)*u(0)>
       double Ax = 2*(tau7-1+exp(-tau7)); //expresion analitica para  <x(tau)-x(0)>
       double Aux = 1 - exp(-tau7); //expresion analitica para <u(tau)*(x(tau)-x(0))>
+      */
 
-      printf("%5.1f  %5.3f %5.3f %5.3f %5.3f %5.3f %5.3f \n", tau7, Au, u7*u0, Aux, u7*(x7-x0), Ax, pow(x7-x0,2));
-
+      //printf("%5.1f  %5.3f %5.3f %5.3f %5.3f %5.3f %5.3f \n", tau7, Au, u7*u0, Aux, u7*(x7-x0), Ax, pow(x7-x0,2));
     }
+    }
+
+  for(int i=0; i<4; i++)
+    {
+      for(int j=0; j<int(tf)+1; j++)
+      {
+	double temporal = 0.0;
+	for(int k=0; k<traj; k++)
+	  {
+	    temporal = temporal + table[k][j][i];
+	  }
+	average[j][i] = temporal/traj;
+	//printf("%5.3f \n", average[j][i]);
+      }
+  }
+
+
+      for(int i=0; i<int(tf)+1; i++)
+      {
+	printf("%8.1f  %8.3f %8.3f %8.3f \n", average[i][0], average[i][1], average[i][2], average[i][3]);	
+      }
+  
   
 }
