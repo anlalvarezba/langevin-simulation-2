@@ -26,11 +26,11 @@ int main()
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  int traj=13000; //numero de trayectorias para las que se realiza la simulacion
+  int traj=100000; //numero de trayectorias para las que se realiza la simulacion
 
 
-  double table [traj*(int(tf)+1)*4];
-  double average [(int(tf)+1)*4];
+  double* table = new double [traj*(int(tf)+1)*4];
+  double* average = new double [(int(tf)+1)*4];
   
   for(int c=0; c<traj; c++)
     {
@@ -104,5 +104,6 @@ int main()
 	printf("%8.1f  %8.3f %8.3f %8.3f \n", average[i*4], average[i*4+1], average[i*4+2], average[i*4+3]);	
       }
   
-  
+  delete [] table;
+  delete [] average;
 }
