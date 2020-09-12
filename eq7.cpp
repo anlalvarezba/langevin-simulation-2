@@ -11,7 +11,9 @@
 int main()
 {
   double ti = 0.0;
-  double tf = 16.0;
+  double tf = 17.0;
+  //int ti = 0;
+  //int tf = 17;
   double v0 = 1.7331;
   double r0 = 0.0;
 
@@ -24,16 +26,16 @@ int main()
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  int traj=100000; //numero de trayectorias para las que se realiza la simulacion
+  int traj=13000; //numero de trayectorias para las que se realiza la simulacion
 
 
-  double table [traj][(int(tf)+1)][4];
-  double average [(int(tf)+1)][4];
+  double table [traj*(int(tf)+1)*4];
+  double average [(int(tf)+1)*4];
   
   for(int c=0; c<traj; c++)
     {
   
-  for(int j=ti; j<=tf; j++)
+      for(int j=ti; j<tf; j++)
     {
       double t=j/100.0;
 
@@ -66,10 +68,10 @@ int main()
       double x7=b*sqrt(m/(3*k*T))*r;
       double x0=b*sqrt(m/(3*k*T))*r0;
 
-	  table[c][j][0]= tau7;
-	  table[c][j][1]= u7*u0;
-	  table[c][j][2]= u7*(x7-x0);
-	  table[c][j][3]= pow(x7-x0,2);
+      table[0+j*4+c*(int(tf)*4)]= tau7;
+      table[1+j*4+c*(int(tf)*4)]= u7*u0;
+      table[2+j*4+c*(int(tf)*4)]= u7*(x7-x0);
+      table[3+j*4+c*(int(tf)*4)]= pow(x7-x0,2);
 
       
       /*
@@ -84,22 +86,22 @@ int main()
 
   for(int i=0; i<4; i++)
     {
-      for(int j=0; j<int(tf)+1; j++)
+      for(int j=0; j<int(tf); j++)
       {
 	double temporal = 0.0;
 	for(int k=0; k<traj; k++)
 	  {
-	    temporal = temporal + table[k][j][i];
+	    temporal = temporal + table[i+j*4+k*(int(tf)*4)];
 	  }
-	average[j][i] = temporal/traj;
-	//printf("%5.3f \n", average[j][i]);
+	average[i+j*4] = temporal/traj;
+	//printf("%5.3f \n", average[i+j*4]);
       }
   }
 
 
-      for(int i=0; i<int(tf)+1; i++)
+  for(int i=0; i<int(tf); i++)
       {
-	printf("%8.1f  %8.3f %8.3f %8.3f \n", average[i][0], average[i][1], average[i][2], average[i][3]);	
+	printf("%8.1f  %8.3f %8.3f %8.3f \n", average[i*4], average[i*4+1], average[i*4+2], average[i*4+3]);	
       }
   
   
