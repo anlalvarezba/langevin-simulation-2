@@ -8,6 +8,8 @@
 #include<iomanip>
 #include<vector>
 
+  double b  = 50.0;
+
 int main()
 {
   double ti = 0.0;
@@ -17,7 +19,7 @@ int main()
   double v0 = 1.7331;
   double r0 = 0.0;
 
-  double b  = 50.0;
+  //double b  = 50.0;
   double F0 = 0.0;
   double m  = 1.0;
   double k  = 1.0;
@@ -29,8 +31,9 @@ int main()
   int traj=100000; //numero de trayectorias para las que se realiza la simulacion
 
 
-  double* table = new double [traj*(int(tf)+1)*4];
-  double* average = new double [(int(tf)+1)*4];
+  double* table = new double [traj*(int(tf)*4)];
+  double* average = new double [(int(tf)*4)];
+  double* analytic = new double[(int(tf)*4)];
   
   for(int c=0; c<traj; c++)
     {
@@ -99,11 +102,24 @@ int main()
   }
 
 
+  for(int j=ti; j<tf; j++)
+    {
+      double t=j/100.0;
+      double tau=b*t;
+      analytic [j*4] = tau;
+      analytic [1+j*4] = exp(-tau); //expresion analitica para <u(tau)*u(0)>
+      analytic [2+j*4] = 1 - exp(-tau); //expresion analitica para <u(tau)*(x(tau)-x(0))>
+      analytic [3+j*4] = 2*(tau-1+exp(-tau)); //expresion analitica para  <x(tau)-x(0)>
+
+      
+    }
+  
   for(int i=0; i<int(tf); i++)
       {
-	printf("%8.1f  %8.3f %8.3f %8.3f \n", average[i*4], average[i*4+1], average[i*4+2], average[i*4+3]);	
+	printf("%8.1f  %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f \n", analytic[i*4], analytic[i*4+1], average[i*4+1], analytic[i*4+2], average[i*4+2], analytic[i*4+3], average[i*4+3]);	
       }
   
   delete [] table;
   delete [] average;
+  delete [] analytic; 
 }
